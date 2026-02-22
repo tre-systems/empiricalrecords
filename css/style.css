@@ -44,15 +44,8 @@ header {
 .logo-link:hover { color: var(--accent); }
 
 .logo {
-    width: 40px;
     height: 40px;
-}
-
-h1 {
-    font-size: 2rem;
-    font-weight: 300;
-    letter-spacing: 0.15em;
-    text-transform: lowercase;
+    width: auto;
 }
 
 nav#main-nav {
@@ -432,7 +425,7 @@ footer a:hover { color: var(--text); }
 
 /* === Responsive === */
 @media (max-width: 768px) {
-    h1 { font-size: 1.5rem; }
+    .logo { height: 32px; }
     .artists-grid { grid-template-columns: 1fr; padding: 0 1rem 2rem; }
     .player { gap: 0.5rem; padding: 0.5rem 0.75rem; flex-wrap: wrap; }
     .player-track { flex: 1 1 100%; order: -1; }
@@ -442,7 +435,7 @@ footer a:hover { color: var(--text); }
 }
 
 @media (max-width: 480px) {
-    h1 { font-size: 1.25rem; letter-spacing: 0.1em; }
+    .logo { height: 28px; }
     nav#main-nav { font-size: 0.8rem; }
     .artist-card-img { height: 160px; }
 }
