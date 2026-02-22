@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Multivibrator - empirical records</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="icon" type="image/gif" href="images/empiricalRecordsLogo.gif">
+</head>
+<body>
+    <header>
+        <a href="index.html" class="logo-link">
+            <img src="images/empiricalRecordsLogo.gif" alt="empirical records" class="logo">
+            <h1>empirical records</h1>
+        </a>
+        <nav id="main-nav">
+            <a href="artist-csu.html">CSU</a>
+            <span class="sep">:</span>
+            <a href="artist-multivibrator.html" class="active">Multivibrator</a>
+            <span class="sep">:</span>
+            <a href="artist-uv.html">UV</a>
+            <span class="sep">:</span>
+            <a href="artist-dsb.html">Disco Suicide Bomber</a>
+        </nav>
+    </header>
+
+    <main class="artist-page">
+        <div class="artist-header">
+            <h2>Multivibrator</h2>
+        </div>
+
+        <div class="album">
+            <h3 class="album-title">Music For Stealth Bomber Pilots</h3>
+            <ol class="track-list">
+                <li class="track" data-src="Multivibrator/musicForStealthBomberPilots/2WindUpInsectsAnd1Nunzilla.mp3" data-title="2 Wind-up Insects And 1 Nunzilla" data-artist="Multivibrator">
+                    <span class="track-number">1</span>
+                    <span class="track-name">2 Wind-up Insects And 1 Nunzilla</span>
+                    <span class="track-duration">2:07</span>
+                </li>
+                <li class="track" data-src="Multivibrator/musicForStealthBomberPilots/fnMan.mp3" data-title="fnMan" data-artist="Multivibrator">
+                    <span class="track-number">2</span>
+                    <span class="track-name">fnMan</span>
+                    <span class="track-duration">4:39</span>
+                </li>
+            </ol>
+        </div>
+
+        <div class="album">
+            <h3 class="album-title">Schmitt Trigger</h3>
+            <ol class="track-list">
+                <li class="track" data-src="Multivibrator/SchmittTrigger/almostInvisible.mp3" data-title="Almost Invisible" data-artist="Multivibrator">
+                    <span class="track-number">1</span>
+                    <span class="track-name">Almost Invisible</span>
+                    <span class="track-duration">4:12</span>
+                </li>
+                <li class="track" data-src="Multivibrator/SchmittTrigger/ether.mp3" data-title="Ether" data-artist="Multivibrator">
+                    <span class="track-number">2</span>
+                    <span class="track-name">Ether</span>
+                    <span class="track-duration">4:02</span>
+                </li>
+                <li class="track" data-src="Multivibrator/SchmittTrigger/science.mp3" data-title="Science" data-artist="Multivibrator">
+                    <span class="track-number">3</span>
+                    <span class="track-name">Science</span>
+                    <span class="track-duration">10:22</span>
+                </li>
+                <li class="track" data-src="Multivibrator/SchmittTrigger/kenya.mp3" data-title="Kenya" data-artist="Multivibrator">
+                    <span class="track-number">4</span>
+                    <span class="track-name">Kenya</span>
+                    <span class="track-duration">4:40</span>
+                </li>
+            </ol>
+        </div>
+    </main>
+
+    <div id="player" class="player">
+        <div class="player-track">
+            <span id="player-artist" class="player-artist"></span>
+            <span id="player-title" class="player-title"></span>
+        </div>
+        <div class="player-controls">
+            <button id="player-prev" class="player-btn" title="Previous">&#9664;&#9664;</button>
+            <button id="player-play" class="player-btn player-btn-main" title="Play">&#9654;</button>
+            <button id="player-next" class="player-btn" title="Next">&#9654;&#9654;</button>
+        </div>
+        <div class="player-progress-wrap" id="player-progress-wrap">
+            <div class="player-progress" id="player-progress"></div>
+        </div>
+        <div class="player-time">
+            <span id="player-current">0:00</span>
+            <span id="player-duration">0:00</span>
+        </div>
+        <div class="player-volume-wrap">
+            <input type="range" id="player-volume" min="0" max="1" step="0.01" value="0.8" class="player-volume">
+        </div>
+    </div>
+
+    <footer>
+        <a href="mailto:info@empiricalrecords.com">contact</a>
+        <span class="sep">:</span>
+        <a href="https://creativecommons.org/licenses/by-sa/1.0/" target="_blank" rel="noopener">license</a>
+    </footer>
+
+    <script src="js/player.js"></script>
+</body>
+</html>

@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Disco Suicide Bomber - empirical records</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="icon" type="image/gif" href="images/empiricalRecordsLogo.gif">
+</head>
+<body>
+    <header>
+        <a href="index.html" class="logo-link">
+            <img src="images/empiricalRecordsLogo.gif" alt="empirical records" class="logo">
+            <h1>empirical records</h1>
+        </a>
+        <nav id="main-nav">
+            <a href="artist-csu.html">CSU</a>
+            <span class="sep">:</span>
+            <a href="artist-multivibrator.html">Multivibrator</a>
+            <span class="sep">:</span>
+            <a href="artist-uv.html">UV</a>
+            <span class="sep">:</span>
+            <a href="artist-dsb.html" class="active">Disco Suicide Bomber</a>
+        </nav>
+    </header>
+
+    <main class="artist-page">
+        <div class="artist-header">
+            <h2>Disco Suicide Bomber</h2>
+        </div>
+
+        <div class="album">
+            <h3 class="album-title">Bombing For Love</h3>
+            <ol class="track-list">
+                <li class="track" data-src="DiscoSuicideBomber/BombingForLove/dontStop.mp3" data-title="Dont Stop" data-artist="Disco Suicide Bomber">
+                    <span class="track-number">1</span>
+                    <span class="track-name">Dont Stop</span>
+                    <span class="track-duration">4:35</span>
+                </li>
+                <li class="track" data-src="DiscoSuicideBomber/BombingForLove/ifeellove.mp3" data-title="I Feel Love" data-artist="Disco Suicide Bomber">
+                    <span class="track-number">2</span>
+                    <span class="track-name">I Feel Love</span>
+                    <span class="track-duration">6:04</span>
+                </li>
+                <li class="track" data-src="DiscoSuicideBomber/BombingForLove/staynalive.mp3" data-title="Stayn Alive" data-artist="Disco Suicide Bomber">
+                    <span class="track-number">3</span>
+                    <span class="track-name">Stayn Alive</span>
+                    <span class="track-duration">4:50</span>
+                </li>
+                <li class="track" data-src="DiscoSuicideBomber/BombingForLove/billyJean.mp3" data-title="Billy Jean" data-artist="Disco Suicide Bomber">
+                    <span class="track-number">4</span>
+                    <span class="track-name">Billy Jean</span>
+                    <span class="track-duration">4:51</span>
+                </li>
+                <li class="track" data-src="DiscoSuicideBomber/BombingForLove/superstitious.mp3" data-title="Superstitious" data-artist="Disco Suicide Bomber">
+                    <span class="track-number">5</span>
+                    <span class="track-name">Superstitious</span>
+                    <span class="track-duration">4:03</span>
+                </li>
+                <li class="track" data-src="DiscoSuicideBomber/BombingForLove/californication.mp3" data-title="Californication" data-artist="Disco Suicide Bomber">
+                    <span class="track-number">6</span>
+                    <span class="track-name">Californication</span>
+                    <span class="track-duration">4:43</span>
+                </li>
+            </ol>
+        </div>
+    </main>
+
+    <div id="player" class="player">
+        <div class="player-track">
+            <span id="player-artist" class="player-artist"></span>
+            <span id="player-title" class="player-title"></span>
+        </div>
+        <div class="player-controls">
+            <button id="player-prev" class="player-btn" title="Previous">&#9664;&#9664;</button>
+            <button id="player-play" class="player-btn player-btn-main" title="Play">&#9654;</button>
+            <button id="player-next" class="player-btn" title="Next">&#9654;&#9654;</button>
+        </div>
+        <div class="player-progress-wrap" id="player-progress-wrap">
+            <div class="player-progress" id="player-progress"></div>
+        </div>
+        <div class="player-time">
+            <span id="player-current">0:00</span>
+            <span id="player-duration">0:00</span>
+        </div>
+        <div class="player-volume-wrap">
+            <input type="range" id="player-volume" min="0" max="1" step="0.01" value="0.8" class="player-volume">
+        </div>
+    </div>
+
+    <footer>
+        <a href="mailto:info@empiricalrecords.com">contact</a>
+        <span class="sep">:</span>
+        <a href="https://creativecommons.org/licenses/by-sa/1.0/" target="_blank" rel="noopener">license</a>
+    </footer>
+
+    <script src="js/player.js"></script>
+</body>
+</html>
