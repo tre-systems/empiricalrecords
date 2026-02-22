@@ -17,7 +17,13 @@
     const titleEl = document.getElementById('player-title');
     const volumeEl = document.getElementById('player-volume');
 
+    if (!playerEl || !playBtn || !prevBtn || !nextBtn || !progressWrap || !progressBar || !currentTimeEl || !durationEl || !artistEl || !titleEl || !volumeEl) {
+        return;
+    }
+
     audio.volume = 0.8;
+    playerEl.setAttribute('aria-hidden', 'true');
+    playerEl.setAttribute('inert', '');
 
     function formatTime(sec) {
         if (isNaN(sec)) return '0:00';
@@ -26,17 +32,50 @@
         return m + ':' + (s < 10 ? '0' : '') + s;
     }
 
+    function clamp(value, min, max) {
+        return Math.min(max, Math.max(min, value));
+    }
+
+    function updateSeekAria() {
+        const duration = Number.isFinite(audio.duration) ? audio.duration : 0;
+        const currentTime = Number.isFinite(audio.currentTime) ? audio.currentTime : 0;
+        progressWrap.setAttribute('aria-valuemin', '0');
+        progressWrap.setAttribute('aria-valuemax', String(Math.floor(duration)));
+        progressWrap.setAttribute('aria-valuenow', String(Math.floor(currentTime)));
+        progressWrap.setAttribute('aria-valuetext', formatTime(currentTime) + ' of ' + formatTime(duration));
+    }
+
     function showPlayer() {
         playerEl.classList.add('visible');
+        playerEl.removeAttribute('inert');
+        playerEl.setAttribute('aria-hidden', 'false');
     }
 
     function updatePlayButton() {
-        playBtn.innerHTML = audio.paused ? '&#9654;' : '&#9646;&#9646;';
+        if (audio.paused) {
+            playBtn.innerHTML = '&#9654;';
+            playBtn.setAttribute('aria-label', 'Play');
+            playBtn.setAttribute('aria-pressed', 'false');
+            return;
+        }
+        playBtn.innerHTML = '&#9646;&#9646;';
+        playBtn.setAttribute('aria-label', 'Pause');
+        playBtn.setAttribute('aria-pressed', 'true');
+    }
+
+    function safePlay() {
+        const playResult = audio.play();
+        if (playResult && typeof playResult.catch === 'function') {
+            playResult.catch(function() {
+                updatePlayButton();
+            });
+        }
     }
 
     function clearActiveTrack() {
         document.querySelectorAll('.track.playing').forEach(function(el) {
             el.classList.remove('playing');
+            el.removeAttribute('aria-current');
         });
     }
 
@@ -44,6 +83,7 @@
         clearActiveTrack();
         if (currentIndex >= 0 && playlist[currentIndex] && playlist[currentIndex].element) {
             playlist[currentIndex].element.classList.add('playing');
+            playlist[currentIndex].element.setAttribute('aria-current', 'true');
         }
     }
 
@@ -56,35 +96,53 @@
         titleEl.textContent = track.title;
         setActiveTrack();
         showPlayer();
+        updateSeekAria();
     }
 
     function playTrack(index) {
         loadTrack(index);
-        audio.play();
+        safePlay();
         updatePlayButton();
+    }
+
+    function toggleTrack(index) {
+        if (index === currentIndex) {
+            if (audio.paused) {
+                safePlay();
+            } else {
+                audio.pause();
+            }
+            updatePlayButton();
+            return;
+        }
+        playTrack(index);
     }
 
     // Collect all tracks from the page
     function initPlaylist() {
         playlist = [];
-        document.querySelectorAll('.track').forEach(function(el) {
+        document.querySelectorAll('.track').forEach(function(el, index) {
+            const title = el.dataset.title || 'Track';
+            const artist = el.dataset.artist || 'Unknown artist';
             playlist.push({
                 src: el.dataset.src,
-                title: el.dataset.title,
-                artist: el.dataset.artist,
+                title: title,
+                artist: artist,
                 element: el
             });
 
+            el.setAttribute('tabindex', '0');
+            el.setAttribute('role', 'button');
+            el.setAttribute('aria-label', 'Play ' + title + ' by ' + artist);
+
             el.addEventListener('click', function() {
-                var idx = playlist.findIndex(function(t) { return t.element === el; });
-                if (idx === currentIndex && !audio.paused) {
-                    audio.pause();
-                    updatePlayButton();
-                } else if (idx === currentIndex && audio.paused) {
-                    audio.play();
-                    updatePlayButton();
-                } else {
-                    playTrack(idx);
+                toggleTrack(index);
+            });
+
+            el.addEventListener('keydown', function(e) {
+                if (e.code === 'Enter' || e.code === 'Space') {
+                    e.preventDefault();
+                    toggleTrack(index);
                 }
             });
         });
@@ -92,10 +150,11 @@
 
     // Controls
     playBtn.addEventListener('click', function() {
+        if (playlist.length === 0) return;
         if (currentIndex < 0 && playlist.length > 0) {
             playTrack(0);
         } else if (audio.paused) {
-            audio.play();
+            safePlay();
         } else {
             audio.pause();
         }
@@ -122,10 +181,12 @@
             progressBar.style.width = (audio.currentTime / audio.duration * 100) + '%';
             currentTimeEl.textContent = formatTime(audio.currentTime);
         }
+        updateSeekAria();
     });
 
     audio.addEventListener('loadedmetadata', function() {
         durationEl.textContent = formatTime(audio.duration);
+        updateSeekAria();
     });
 
     audio.addEventListener('ended', function() {
@@ -143,9 +204,36 @@
     progressWrap.addEventListener('click', function(e) {
         if (audio.duration) {
             var rect = progressWrap.getBoundingClientRect();
-            var ratio = (e.clientX - rect.left) / rect.width;
+            var ratio = clamp((e.clientX - rect.left) / rect.width, 0, 1);
             audio.currentTime = ratio * audio.duration;
+            updateSeekAria();
         }
+    });
+
+    progressWrap.addEventListener('keydown', function(e) {
+        if (!audio.duration) return;
+        var step = Math.max(audio.duration * 0.02, 5);
+        var nextTime = audio.currentTime;
+
+        if (e.key === 'ArrowLeft') {
+            nextTime = audio.currentTime - step;
+        } else if (e.key === 'ArrowRight') {
+            nextTime = audio.currentTime + step;
+        } else if (e.key === 'PageDown') {
+            nextTime = audio.currentTime - 30;
+        } else if (e.key === 'PageUp') {
+            nextTime = audio.currentTime + 30;
+        } else if (e.key === 'Home') {
+            nextTime = 0;
+        } else if (e.key === 'End') {
+            nextTime = audio.duration;
+        } else {
+            return;
+        }
+
+        e.preventDefault();
+        audio.currentTime = clamp(nextTime, 0, audio.duration);
+        updateSeekAria();
     });
 
     // Volume
@@ -154,24 +242,44 @@
     });
 
     // Lightbox
+    var lightboxEl = document.getElementById('lightbox');
+
+    function closeLightbox() {
+        if (!lightboxEl) return;
+        var img = lightboxEl.querySelector('img');
+        lightboxEl.classList.remove('active');
+        if (img) {
+            img.src = '';
+            img.alt = 'Full size image';
+        }
+    }
+
     document.addEventListener('click', function(e) {
         if (e.target.matches('.gallery img')) {
-            var lb = document.getElementById('lightbox');
-            if (lb) {
-                lb.querySelector('img').src = e.target.src;
-                lb.classList.add('active');
+            if (lightboxEl) {
+                var img = lightboxEl.querySelector('img');
+                if (img) {
+                    img.src = e.target.src;
+                    img.alt = e.target.alt || 'Gallery image';
+                }
+                lightboxEl.classList.add('active');
             }
         }
         if (e.target.matches('.lightbox, .lightbox-close')) {
-            var lb = document.getElementById('lightbox');
-            if (lb) lb.classList.remove('active');
+            closeLightbox();
         }
     });
 
     // Keyboard shortcuts
     document.addEventListener('keydown', function(e) {
-        if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
+        if (e.key === 'Escape' && lightboxEl && lightboxEl.classList.contains('active')) {
+            closeLightbox();
+            return;
+        }
+
+        if (e.target.closest('input, textarea, select, button, a, [role="button"]')) return;
         if (e.code === 'Space') {
+            if (playlist.length === 0) return;
             e.preventDefault();
             playBtn.click();
         }
@@ -179,4 +287,6 @@
 
     // Init
     initPlaylist();
+    updatePlayButton();
+    updateSeekAria();
 })();

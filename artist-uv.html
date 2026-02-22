@@ -3,29 +3,39 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>UV - empirical records</title>
+    <title>UV | empirical records</title>
+    <meta name="description" content="UV releases on empirical records: (symbol) and UFO. Stream tracks and browse the full UV artwork archive.">
+    <link rel="canonical" href="https://empiricalrecords.pages.dev/artist-uv">
+    <meta property="og:type" content="music.playlist">
+    <meta property="og:site_name" content="empirical records">
+    <meta property="og:title" content="UV | empirical records">
+    <meta property="og:description" content="Stream UV releases and explore archival artwork.">
+    <meta property="og:url" content="https://empiricalrecords.pages.dev/artist-uv">
+    <meta property="og:image" content="https://empiricalrecords.pages.dev/UV/images/goddess1.jpg">
+    <meta name="twitter:card" content="summary">
     <link rel="stylesheet" href="css/style.css">
-    <link rel="icon" type="image/gif" href="images/empiricalRecordsLogo.gif">
+    <link rel="icon" href="/favicon.ico" type="image/x-icon">
+    <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon">
 </head>
 <body>
     <header>
-        <a href="index.html" class="logo-link">
+        <a href="/" class="logo-link">
             <img src="images/empiricalRecordsLogo.gif" alt="empirical records" class="logo">
         </a>
         <nav id="main-nav">
-            <a href="artist-csu.html">CSU</a>
+            <a href="/artist-csu">CSU</a>
             <span class="sep">:</span>
-            <a href="artist-multivibrator.html">Multivibrator</a>
+            <a href="/artist-multivibrator">Multivibrator</a>
             <span class="sep">:</span>
-            <a href="artist-uv.html" class="active">UV</a>
+            <a href="/artist-uv" class="active">UV</a>
             <span class="sep">:</span>
-            <a href="artist-dsb.html">Disco Suicide Bomber</a>
+            <a href="/artist-dsb">Disco Suicide Bomber</a>
         </nav>
     </header>
 
     <main class="artist-page">
         <div class="artist-header">
-            <h2>UV</h2>
+            <h1>UV</h1>
         </div>
 
         <div class="album">
@@ -140,21 +150,21 @@
     </main>
 
     <div id="lightbox" class="lightbox">
-        <button class="lightbox-close">&times;</button>
+        <button class="lightbox-close" aria-label="Close image viewer">&times;</button>
         <img src="" alt="Full size image">
     </div>
 
-    <div id="player" class="player">
-        <div class="player-track">
+    <div id="player" class="player" aria-hidden="true" inert>
+        <div class="player-track" aria-live="polite">
             <span id="player-artist" class="player-artist"></span>
             <span id="player-title" class="player-title"></span>
         </div>
         <div class="player-controls">
-            <button id="player-prev" class="player-btn" title="Previous">&#9664;&#9664;</button>
-            <button id="player-play" class="player-btn player-btn-main" title="Play">&#9654;</button>
-            <button id="player-next" class="player-btn" title="Next">&#9654;&#9654;</button>
+            <button id="player-prev" class="player-btn" title="Previous" aria-label="Previous track">&#9664;&#9664;</button>
+            <button id="player-play" class="player-btn player-btn-main" title="Play" aria-label="Play" aria-pressed="false">&#9654;</button>
+            <button id="player-next" class="player-btn" title="Next" aria-label="Next track">&#9654;&#9654;</button>
         </div>
-        <div class="player-progress-wrap" id="player-progress-wrap">
+        <div class="player-progress-wrap" id="player-progress-wrap" tabindex="0" role="slider" aria-label="Seek position" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0">
             <div class="player-progress" id="player-progress"></div>
         </div>
         <div class="player-time">
@@ -162,7 +172,7 @@
             <span id="player-duration">0:00</span>
         </div>
         <div class="player-volume-wrap">
-            <input type="range" id="player-volume" min="0" max="1" step="0.01" value="0.8" class="player-volume">
+            <input type="range" id="player-volume" min="0" max="1" step="0.01" value="0.8" class="player-volume" aria-label="Volume">
         </div>
     </div>
 

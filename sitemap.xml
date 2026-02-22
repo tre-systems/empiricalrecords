@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <url>
+    <loc>https://empiricalrecords.pages.dev/</loc>
+    <changefreq>monthly</changefreq>
+  </url>
+  <url>
+    <loc>https://empiricalrecords.pages.dev/artist-csu</loc>
+    <changefreq>monthly</changefreq>
+  </url>
+  <url>
+    <loc>https://empiricalrecords.pages.dev/artist-multivibrator</loc>
+    <changefreq>monthly</changefreq>
+  </url>
+  <url>
+    <loc>https://empiricalrecords.pages.dev/artist-uv</loc>
+    <changefreq>monthly</changefreq>
+  </url>
+  <url>
+    <loc>https://empiricalrecords.pages.dev/artist-dsb</loc>
+    <changefreq>monthly</changefreq>
+  </url>
+</urlset>

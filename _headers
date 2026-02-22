@@ -1,0 +1,54 @@
+/*
+  X-Content-Type-Options: nosniff
+  Referrer-Policy: strict-origin-when-cross-origin
+
+/
+  Cache-Control: public, max-age=0, must-revalidate
+
+/artist-csu
+  Cache-Control: public, max-age=0, must-revalidate
+
+/artist-multivibrator
+  Cache-Control: public, max-age=0, must-revalidate
+
+/artist-uv
+  Cache-Control: public, max-age=0, must-revalidate
+
+/artist-dsb
+  Cache-Control: public, max-age=0, must-revalidate
+
+/404.html
+  Cache-Control: public, max-age=0, must-revalidate
+
+/robots.txt
+  Cache-Control: public, max-age=3600
+
+/sitemap.xml
+  Cache-Control: public, max-age=3600
+
+/favicon.ico
+  Cache-Control: public, max-age=31536000, immutable
+
+/*.html
+  Cache-Control: public, max-age=0, must-revalidate
+
+/css/*
+  Cache-Control: public, max-age=31536000, immutable
+
+/js/*
+  Cache-Control: public, max-age=31536000, immutable
+
+/images/*
+  Cache-Control: public, max-age=31536000, immutable
+
+/CSU/*
+  Cache-Control: public, max-age=31536000, immutable
+
+/Multivibrator/*
+  Cache-Control: public, max-age=31536000, immutable
+
+/UV/*
+  Cache-Control: public, max-age=31536000, immutable
+
+/DiscoSuicideBomber/*
+  Cache-Control: public, max-age=31536000, immutable
