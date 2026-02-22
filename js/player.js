@@ -243,6 +243,29 @@
 
     // Lightbox
     var lightboxEl = document.getElementById('lightbox');
+    var lightboxCloseBtn = lightboxEl ? lightboxEl.querySelector('.lightbox-close') : null;
+    var lightboxReturnTarget = null;
+    var mainEl = document.querySelector('main');
+    var footerEl = document.querySelector('footer');
+    var headerEl = document.querySelector('header');
+
+    function openLightbox(triggerEl, src, alt) {
+        if (!lightboxEl) return;
+        var img = lightboxEl.querySelector('img');
+        if (img) {
+            img.src = src;
+            img.alt = alt || 'Gallery image';
+        }
+        lightboxReturnTarget = triggerEl;
+        lightboxEl.classList.add('active');
+        // Trap focus: make background inert
+        if (mainEl) mainEl.setAttribute('inert', '');
+        if (playerEl) playerEl.setAttribute('inert', '');
+        if (footerEl) footerEl.setAttribute('inert', '');
+        if (headerEl) headerEl.setAttribute('inert', '');
+        // Move focus to close button
+        if (lightboxCloseBtn) lightboxCloseBtn.focus();
+    }
 
     function closeLightbox() {
         if (!lightboxEl) return;
@@ -252,18 +275,46 @@
             img.src = '';
             img.alt = 'Full size image';
         }
+        // Restore inert state
+        if (mainEl) mainEl.removeAttribute('inert');
+        if (playerEl && playerEl.classList.contains('visible')) {
+            playerEl.removeAttribute('inert');
+        }
+        if (footerEl) footerEl.removeAttribute('inert');
+        if (headerEl) headerEl.removeAttribute('inert');
+        // Return focus to the triggering image
+        if (lightboxReturnTarget) {
+            lightboxReturnTarget.focus();
+            lightboxReturnTarget = null;
+        }
     }
+
+    // Tab trapping inside lightbox
+    if (lightboxEl) {
+        lightboxEl.addEventListener('keydown', function(e) {
+            if (e.key === 'Tab') {
+                // Only the close button is focusable, keep focus there
+                e.preventDefault();
+                if (lightboxCloseBtn) lightboxCloseBtn.focus();
+            }
+        });
+    }
+
+    // Make gallery images keyboard-accessible
+    document.querySelectorAll('.gallery img').forEach(function(img) {
+        img.setAttribute('tabindex', '0');
+        img.setAttribute('role', 'button');
+        img.addEventListener('keydown', function(e) {
+            if (e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault();
+                openLightbox(img, img.src, img.alt);
+            }
+        });
+    });
 
     document.addEventListener('click', function(e) {
         if (e.target.matches('.gallery img')) {
-            if (lightboxEl) {
-                var img = lightboxEl.querySelector('img');
-                if (img) {
-                    img.src = e.target.src;
-                    img.alt = e.target.alt || 'Gallery image';
-                }
-                lightboxEl.classList.add('active');
-            }
+            openLightbox(e.target, e.target.src, e.target.alt);
         }
         if (e.target.matches('.lightbox, .lightbox-close')) {
             closeLightbox();

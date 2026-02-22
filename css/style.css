@@ -77,11 +77,16 @@ nav#main-nav a.active { color: var(--text); }
     margin-bottom: 0.5rem;
 }
 
-.site-title {
-    font-size: 1.35rem;
-    font-weight: 500;
-    letter-spacing: 0.08em;
-    margin-bottom: 0.5rem;
+.sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
 }
 
 .cc-note {
@@ -224,7 +229,7 @@ nav#main-nav a.active { color: var(--text); }
     margin-top: 3rem;
 }
 
-.gallery-section h3 {
+.gallery-section h2 {
     font-size: 1rem;
     font-weight: 600;
     letter-spacing: 0.05em;
@@ -252,6 +257,12 @@ nav#main-nav a.active { color: var(--text); }
 
 .gallery img:hover {
     opacity: 0.85;
+    transform: scale(1.02);
+}
+
+.gallery img:focus-visible {
+    outline: 2px solid var(--accent-light);
+    outline-offset: 2px;
     transform: scale(1.02);
 }
 
