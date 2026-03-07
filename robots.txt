@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://empiricalrecords.pages.dev/sitemap.xml
+Sitemap: https://www.empiricalrecords.com/sitemap.xml
