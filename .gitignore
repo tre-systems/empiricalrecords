@@ -1,0 +1,21 @@
+# Credentials
+.env
+.env.local
+!.env.example
+
+# OS
+.DS_Store
+
+# Cloudflare (wrangler OAuth tokens, state)
+.wrangler/
+
+# Python
+__pycache__/
+*.pyc
+
+# Editor
+*.swp
+*~
+
+# Backups
+*.bak
