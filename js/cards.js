@@ -343,26 +343,27 @@
     });
 
     // Graphic equalizer wavy lines — each band driven by a frequency range
+    // Subtle at idle, expressive when music plays
     var eqBands = [
-      { yBase: 0.15, band: 'bass',   baseAmp: 8,  freq: 0.015, speed: 0.4, color: [180, 155, 85] },
-      { yBase: 0.25, band: 'bass',   baseAmp: 6,  freq: 0.012, speed: 0.5, color: [170, 145, 75] },
-      { yBase: 0.35, band: 'mid',    baseAmp: 5,  freq: 0.018, speed: 0.6, color: [160, 140, 80] },
-      { yBase: 0.45, band: 'mid',    baseAmp: 5,  freq: 0.022, speed: 0.7, color: [150, 135, 75] },
-      { yBase: 0.55, band: 'mid',    baseAmp: 4,  freq: 0.025, speed: 0.8, color: [145, 150, 80] },
-      { yBase: 0.65, band: 'treble', baseAmp: 3,  freq: 0.03,  speed: 0.9, color: [140, 155, 85] },
-      { yBase: 0.75, band: 'treble', baseAmp: 3,  freq: 0.035, speed: 1.0, color: [135, 145, 80] },
-      { yBase: 0.85, band: 'energy', baseAmp: 4,  freq: 0.02,  speed: 0.55, color: [155, 140, 70] },
+      { yBase: 0.15, band: 'bass',   baseAmp: 3,  freq: 0.015, speed: 0.4, color: [180, 155, 85] },
+      { yBase: 0.25, band: 'bass',   baseAmp: 2.5,freq: 0.012, speed: 0.5, color: [170, 145, 75] },
+      { yBase: 0.35, band: 'mid',    baseAmp: 2,  freq: 0.018, speed: 0.6, color: [160, 140, 80] },
+      { yBase: 0.45, band: 'mid',    baseAmp: 2,  freq: 0.022, speed: 0.7, color: [150, 135, 75] },
+      { yBase: 0.55, band: 'mid',    baseAmp: 1.5,freq: 0.025, speed: 0.8, color: [145, 150, 80] },
+      { yBase: 0.65, band: 'treble', baseAmp: 1.5,freq: 0.03,  speed: 0.9, color: [140, 155, 85] },
+      { yBase: 0.75, band: 'treble', baseAmp: 1,  freq: 0.035, speed: 1.0, color: [135, 145, 80] },
+      { yBase: 0.85, band: 'energy', baseAmp: 2,  freq: 0.02,  speed: 0.55, color: [155, 140, 70] },
     ];
 
     eqBands.forEach(function (eq) {
       var audioLevel = au[eq.band] || 0;
-      var reactiveAmp = eq.baseAmp + audioLevel * 25 + hv * 5;
+      var reactiveAmp = eq.baseAmp + audioLevel * 30 + hv * 5;
       var phase = t * eq.speed * (1 + hv * 0.3 + audioLevel * 0.5);
 
       ctx.beginPath();
-      var alpha = 0.15 + audioLevel * 0.4 + hv * 0.1;
+      var alpha = 0.08 + audioLevel * 0.5 + hv * 0.1;
       ctx.strokeStyle = 'rgba(' + eq.color[0] + ',' + eq.color[1] + ',' + eq.color[2] + ',' + Math.min(0.7, alpha) + ')';
-      ctx.lineWidth = 0.8 + audioLevel * 2 + hv * 0.5;
+      ctx.lineWidth = 0.5 + audioLevel * 2.5 + hv * 0.5;
 
       for (var x3 = 0; x3 <= w; x3 += 2) {
         var localAmp = reactiveAmp;

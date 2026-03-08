@@ -32,7 +32,7 @@ a:hover { color: var(--text); }
 /* === Header === */
 header {
     text-align: center;
-    padding: 3rem 1rem 1.5rem;
+    padding: 3.5rem 1rem 2rem;
 }
 
 .logo-link {
@@ -62,9 +62,10 @@ header {
 }
 
 nav#main-nav {
-    margin-top: 1rem;
-    font-size: 0.875rem;
-    letter-spacing: 0.05em;
+    margin-top: 1.25rem;
+    font-size: 0.8rem;
+    letter-spacing: 0.08em;
+    text-transform: lowercase;
 }
 
 nav#main-nav a {
@@ -99,15 +100,15 @@ nav#main-nav a.active::after {
 /* === Home Hero === */
 .home .hero {
     text-align: center;
-    padding: 2rem 1rem 3rem;
+    padding: 2.5rem 1rem 3.5rem;
 }
 
 .tagline {
     font-family: Georgia, 'Times New Roman', serif;
     font-size: 1rem;
     color: var(--text-muted);
-    letter-spacing: 0.12em;
-    margin-bottom: 0.5rem;
+    letter-spacing: 0.14em;
+    margin-bottom: 0.75rem;
 }
 
 .sr-only {
@@ -131,29 +132,29 @@ nav#main-nav a.active::after {
 .artists-grid {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
-    gap: 1.5rem;
+    gap: 2rem;
     max-width: 1100px;
     margin: 0 auto;
-    padding: 0 1.5rem 3rem;
+    padding: 0 2rem 3rem;
 }
 
 .artist-card {
     display: block;
     background: var(--bg-card);
     border: 1px solid var(--border);
-    border-radius: 8px;
+    border-radius: 4px;
     overflow: hidden;
-    transition: transform 0.25s ease, box-shadow 0.25s ease;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
     color: var(--text);
 }
 .artist-card:hover {
-    transform: translateY(-3px);
-    box-shadow: 0 8px 30px rgba(0,0,0,0.12);
+    transform: translateY(-2px);
+    box-shadow: 0 12px 40px rgba(0,0,0,0.08);
     color: var(--text);
 }
 
 .artist-card-img {
-    height: 220px;
+    height: 240px;
     background-size: cover;
     background-position: center;
     position: relative;
@@ -161,18 +162,21 @@ nav#main-nav a.active::after {
 }
 
 .artist-card-body {
-    padding: 1.25rem;
+    padding: 1.5rem;
 }
 
 .artist-card h2 {
-    font-size: 1.125rem;
-    font-weight: 600;
-    margin-bottom: 0.25rem;
+    font-family: Georgia, 'Times New Roman', serif;
+    font-size: 1.1rem;
+    font-weight: normal;
+    letter-spacing: 0.06em;
+    margin-bottom: 0.4rem;
 }
 
 .artist-card p {
-    font-size: 0.8rem;
+    font-size: 0.75rem;
     color: var(--text-muted);
+    letter-spacing: 0.02em;
 }
 
 /* === Artist Page === */
@@ -184,11 +188,11 @@ nav#main-nav a.active::after {
 
 .artist-hero {
     position: relative;
-    height: 160px;
+    height: 180px;
     max-width: 900px;
     margin: 0 auto;
     overflow: hidden;
-    border-radius: 8px;
+    border-radius: 4px;
 }
 
 .artist-hero canvas {
@@ -211,14 +215,14 @@ nav#main-nav a.active::after {
 
 .artist-header {
     text-align: center;
-    padding: 1rem 0 2rem;
+    padding: 1.5rem 0 2.5rem;
 }
 
 .artist-header h1 {
     font-family: Georgia, 'Times New Roman', serif;
-    font-size: 1.75rem;
+    font-size: 1.6rem;
     font-weight: normal;
-    letter-spacing: 0.12em;
+    letter-spacing: 0.18em;
 }
 
 /* === Album === */
@@ -227,14 +231,15 @@ nav#main-nav a.active::after {
 }
 
 .album-title {
-    font-size: 1rem;
-    font-weight: 600;
-    letter-spacing: 0.05em;
+    font-family: Georgia, 'Times New Roman', serif;
+    font-size: 0.95rem;
+    font-weight: normal;
+    letter-spacing: 0.06em;
     color: var(--accent);
     border-bottom: 1px solid var(--border);
-    border-left: 3px solid var(--accent);
-    padding: 0.25rem 0 0.5rem 0.75rem;
-    margin-bottom: 0.75rem;
+    border-left: 2px solid var(--accent);
+    padding: 0.3rem 0 0.6rem 0.75rem;
+    margin-bottom: 1rem;
 }
 
 /* === Track List === */
@@ -245,13 +250,14 @@ nav#main-nav a.active::after {
 .track {
     display: flex;
     align-items: center;
-    padding: 0.5rem 0.75rem;
-    border-radius: 4px;
+    padding: 0.6rem 0.75rem;
+    border-radius: 3px;
     cursor: pointer;
     transition: background-color 0.15s, border-color 0.15s;
-    font-size: 0.875rem;
+    font-size: 0.85rem;
     gap: 0.75rem;
     border-left: 2px solid transparent;
+    letter-spacing: 0.01em;
 }
 
 .track:hover {
@@ -325,13 +331,14 @@ nav#main-nav a.active::after {
 }
 
 .gallery-section h2 {
-    font-size: 1rem;
-    font-weight: 600;
-    letter-spacing: 0.05em;
+    font-family: Georgia, 'Times New Roman', serif;
+    font-size: 0.95rem;
+    font-weight: normal;
+    letter-spacing: 0.06em;
     color: var(--accent);
     border-bottom: 1px solid var(--border);
-    padding-bottom: 0.5rem;
-    margin-bottom: 1rem;
+    padding-bottom: 0.6rem;
+    margin-bottom: 1.25rem;
 }
 
 .gallery {
@@ -344,21 +351,21 @@ nav#main-nav a.active::after {
     width: 100%;
     height: 150px;
     object-fit: cover;
-    border-radius: 6px;
+    border-radius: 3px;
     cursor: pointer;
-    transition: transform 0.25s ease, box-shadow 0.25s ease;
-    border: 1px solid var(--border);
+    transition: transform 0.3s ease, box-shadow 0.3s ease, opacity 0.3s ease;
 }
 
 .gallery img:hover {
-    transform: scale(1.03);
-    box-shadow: 0 4px 16px rgba(0,0,0,0.1);
+    transform: scale(1.02);
+    box-shadow: 0 6px 24px rgba(0,0,0,0.12);
+    opacity: 0.92;
 }
 
 .gallery img:focus-visible {
     outline: 2px solid var(--accent-light);
     outline-offset: 2px;
-    transform: scale(1.03);
+    transform: scale(1.02);
 }
 
 /* === Lightbox === */
@@ -562,11 +569,12 @@ nav#main-nav a.active::after {
 /* === Footer === */
 footer {
     text-align: center;
-    padding: 2.5rem 1rem 6rem;
-    font-size: 0.8rem;
+    padding: 3rem 1rem 6rem;
+    font-size: 0.75rem;
+    letter-spacing: 0.06em;
     color: var(--text-muted);
     border-top: 1px solid var(--border);
-    margin-top: 2rem;
+    margin-top: 3rem;
 }
 
 footer a { color: var(--text-muted); }
@@ -579,10 +587,14 @@ a:focus-visible {
 
 /* === Responsive === */
 @media (max-width: 768px) {
+    header { padding: 2.5rem 1rem 1.5rem; }
     .logo-icon { height: 26px; width: 26px; }
     .logo-text { font-size: 1.3rem; }
-    .artists-grid { grid-template-columns: 1fr; padding: 0 1rem 2rem; }
-    .artist-card-img { height: 180px; }
+    .home .hero { padding: 2rem 1rem 2.5rem; }
+    .artists-grid { grid-template-columns: 1fr; gap: 1.5rem; padding: 0 1rem 2rem; }
+    .artist-card-img { height: 200px; }
+    .artist-hero { height: 140px; }
+    .artist-header { padding: 1rem 0 2rem; }
     .player { gap: 0.5rem; padding: 0.5rem 0.75rem; flex-wrap: wrap; }
     .player-track { flex: 1 1 100%; order: -1; }
     .player-volume-wrap { display: none; }
@@ -591,8 +603,10 @@ a:focus-visible {
 }
 
 @media (max-width: 480px) {
+    header { padding: 2rem 1rem 1.25rem; }
     .logo-icon { height: 22px; width: 22px; }
     .logo-text { font-size: 1.1rem; }
-    nav#main-nav { font-size: 0.8rem; }
-    .artist-card-img { height: 160px; }
+    nav#main-nav { font-size: 0.75rem; }
+    .artist-card-img { height: 180px; }
+    .artist-header h1 { font-size: 1.3rem; }
 }
