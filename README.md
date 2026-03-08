@@ -20,7 +20,8 @@ All releases are under [Creative Commons BY-SA 1.0](https://creativecommons.org/
 Static site — HTML, CSS, vanilla JS. No build step, no framework.
 
 - **Generative art**: Canvas-based animated visuals per artist on the homepage and artist pages (`js/cards.js`)
-- **Audio player**: Custom HTML5 audio player with keyboard navigation (`js/player.js`)
+- **Audio player**: Custom HTML5 audio player with keyboard navigation, auto-advances through all tracks (`js/player.js`)
+- **Audio-reactive visuals**: Web Audio API frequency analysis feeds into canvas animations — each artist's visuals respond to bass, mid, and treble
 - **Gallery**: Lightbox viewer for archival photos and artwork
 - **Hosting**: JustHost shared hosting via FTP
 - **Deployment**: `python3 upload.py` — FTP upload with verification
