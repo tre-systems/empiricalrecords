@@ -606,7 +606,12 @@ a:focus-visible {
     header { padding: 2rem 1rem 1.25rem; }
     .logo-icon { height: 22px; width: 22px; }
     .logo-text { font-size: 1.1rem; }
-    nav#main-nav { font-size: 0.75rem; }
+    nav#main-nav { font-size: 0.8rem; }
+    .tagline { font-size: 1.05rem; }
+    .cc-note { font-size: 0.8rem; }
+    nav#main-nav .sep { display: none; }
+    nav#main-nav { display: flex; justify-content: center; flex-wrap: wrap; gap: 0.15rem 0.75rem; }
+    nav#main-nav a { white-space: nowrap; }
     .artist-card-img { height: 180px; }
     .artist-header h1 { font-size: 1.3rem; }
 }
