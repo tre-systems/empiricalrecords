@@ -10,6 +10,10 @@ DirectoryIndex index.html index.htm
 </IfModule>
 # php -- END cPanel-generated handler, do not edit
 
+# --- Character encoding ---
+AddDefaultCharset UTF-8
+AddCharset UTF-8 .html .css .js .json .xml .txt
+
 # --- Security hardening ---
 
 # Prevent directory browsing
@@ -50,7 +54,7 @@ RewriteRule ^artist-dsb\.html$ /artist-dsb [R=301,L]
 
 # --- Clean URL rewriting ---
 # Serve .html files for clean URLs
-# ONLY matches our specific artist pages — does not affect subfolders
+# ONLY matches our specific artist pages  - does not affect subfolders
 RewriteRule ^artist-csu$ artist-csu.html [L]
 RewriteRule ^artist-multivibrator$ artist-multivibrator.html [L]
 RewriteRule ^artist-uv$ artist-uv.html [L]

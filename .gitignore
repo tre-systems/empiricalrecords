@@ -3,6 +3,9 @@
 .env.local
 !.env.example
 
+# Claude Code local config
+.claude/
+
 # OS
 .DS_Store
 

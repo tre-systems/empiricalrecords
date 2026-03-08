@@ -2,10 +2,10 @@
  * Generative art cards for empirical records homepage.
  * Each artist gets a unique canvas-based animation matching their musical vibe.
  *
- * CSU — Heavy Industrial: aggressive glitch noise, metallic, harsh
- * Multivibrator — Minimal Experimental Electronic: clean oscilloscope waves, precise
- * UV — Guitar/Organic: warm, flowing, laid-back organic forms
- * DSB — Disco/Trance: hypnotic pulsing disco lights with blood-red trails
+ * CSU - Heavy Industrial: aggressive glitch noise, metallic, harsh
+ * Multivibrator - Minimal Experimental Electronic: clean oscilloscope waves, precise
+ * UV - Guitar/Organic: warm, flowing, laid-back organic forms
+ * DSB - Disco/Trance: hypnotic pulsing disco lights with blood-red trails
  */
 (function () {
   'use strict';
@@ -94,7 +94,7 @@
   }
 
   /* =========================================================
-   * CSU — Heavy Industrial
+   * CSU  - Heavy Industrial
    * Aggressive glitch noise field with harsh metallic tones,
    * heavy scan lines, and blocky distortion artifacts.
    * Hover: noise density increases, glitch blocks go crazy
@@ -106,7 +106,7 @@
     ctx.fillStyle = '#1c1e18';
     ctx.fillRect(0, 0, w, h);
 
-    // Noise seed — bass makes it churn faster
+    // Noise seed  - bass makes it churn faster
     var seed = Math.floor(t * (10 + hv * 15 + au.energy * 20 + au.bass * 15));
     var cols = Math.floor(w / 5);
     var rows = Math.floor(h / 5);
@@ -126,7 +126,7 @@
             var dist = Math.sqrt(dx * dx + dy * dy);
             if (dist < 80) b = Math.min(1, b + (1 - dist / 80) * 0.5);
           }
-          // Treble adds flicker — some pixels flash brighter
+          // Treble adds flicker  - some pixels flash brighter
           if (au.treble > 0.2 && hash(x + seed, y) % 100 < au.treble * 40) {
             b = Math.min(1, b + au.treble * 0.5);
           }
@@ -138,7 +138,7 @@
       }
     }
 
-    // Scan lines — bass drives speed and brightness, more lines with energy
+    // Scan lines  - bass drives speed and brightness, more lines with energy
     var scanCount = 3 + Math.floor(hv * 3 + au.bass * 5 + au.energy * 3);
     for (var i = 0; i < scanCount; i++) {
       var scanSpeed = 25 + i * 15 + au.bass * 50;
@@ -152,7 +152,7 @@
       ctx.fillRect(0, scanY - 10, w, 20);
     }
 
-    // Glitch blocks — energy and bass drive intensity and size
+    // Glitch blocks  - energy and bass drive intensity and size
     var glitchCount = hash(seed, 77) % (4 + Math.floor(hv * 8 + au.energy * 15 + au.bass * 8));
     for (var j = 0; j < glitchCount; j++) {
       var gy = hash(seed, j * 13 + 44) % h;
@@ -173,10 +173,10 @@
   }
 
   /* =========================================================
-   * Multivibrator — Minimal Experimental Electronic
+   * Multivibrator  - Minimal Experimental Electronic
    * Oscilloscope-style waves that wiggle with the music.
    * Audio directly modulates wave shape and frequency.
-   * Hover: waves react — amplitude increases, frequency shifts
+   * Hover: waves react  - amplitude increases, frequency shifts
    * ========================================================= */
   function drawMultivibrator(ctx, s) {
     var w = s.w, h = s.h, t = s.t;
@@ -198,7 +198,7 @@
     ctx.strokeStyle = 'rgba(168, 184, 138, 0.08)';
     ctx.beginPath(); ctx.moveTo(0, h / 2); ctx.lineTo(w, h / 2); ctx.stroke();
 
-    // Oscilloscope waves — audio directly drives amplitude and wobble
+    // Oscilloscope waves  - audio directly drives amplitude and wobble
     var waves = [
       { yOff: 0.5, baseFreq: 0.012, baseAmp: 20, speed: 0.6, alpha: 0.7, width: 1.5, audioBand: 'bass', audioMult: 2.5 },
       { yOff: 0.5, baseFreq: 0.008, baseAmp: 15, speed: 0.45, alpha: 0.4, width: 1.2, audioBand: 'mid', audioMult: 2.0 },
@@ -208,7 +208,7 @@
 
     waves.forEach(function (wave) {
       var audioLevel = au[wave.audioBand] || 0;
-      // Audio drives frequency wobble — oscilloscope-style jitter
+      // Audio drives frequency wobble  - oscilloscope-style jitter
       var freqWobble = 1 + audioLevel * 0.8 + au.treble * 0.3;
       var phase = t * wave.speed * (1 + hv * 0.5 + audioLevel * 0.6);
       // Amplitude strongly driven by audio
@@ -239,7 +239,7 @@
       ctx.stroke();
     });
 
-    // Primary glow trace — strongest audio response
+    // Primary glow trace  - strongest audio response
     ctx.shadowColor = 'rgba(168, 184, 138, ' + Math.min(1, 0.3 + hv * 0.3 + au.energy * 0.5) + ')';
     ctx.shadowBlur = 8 + hv * 8 + au.bass * 15;
     ctx.beginPath();
@@ -266,7 +266,7 @@
   }
 
   /* =========================================================
-   * UV — Guitar Compositions, Organic, Laid-back
+   * UV  - Guitar Compositions, Organic, Laid-back
    * Warm flowing forms with graphic-equalizer wavy lines
    * that follow the music's frequency spectrum.
    * Hover: glow intensifies, EQ lines react more
@@ -280,7 +280,7 @@
     ctx.fillStyle = '#25211a';
     ctx.fillRect(0, 0, w, h);
 
-    // Flowing organic layers — bass drives amplitude, mid drives speed
+    // Flowing organic layers  - bass drives amplitude, mid drives speed
     var layers = [
       { yBase: 0.7,  color: [130, 110, 60],  amp: 40, freq: 0.006, speed: 0.25, alpha: 0.35 },
       { yBase: 0.58, color: [100, 120, 65],  amp: 35, freq: 0.008, speed: 0.35, alpha: 0.3 },
@@ -314,7 +314,7 @@
       ctx.fill();
     });
 
-    // Warm glow spots — pulse with mid frequencies
+    // Warm glow spots  - pulse with mid frequencies
     var glows = [
       { cx: 0.3, cy: 0.35, r: 0.25, speed: 0.2,  color: [160, 130, 60] },
       { cx: 0.7, cy: 0.45, r: 0.22, speed: 0.15, color: [130, 140, 70] },
@@ -342,7 +342,7 @@
       ctx.fillRect(0, 0, w, h);
     });
 
-    // Graphic equalizer wavy lines — each band driven by a frequency range
+    // Graphic equalizer wavy lines  - each band driven by a frequency range
     // Subtle at idle, expressive when music plays
     var eqBands = [
       { yBase: 0.15, band: 'bass',   baseAmp: 3,  freq: 0.015, speed: 0.4, color: [180, 155, 85] },
@@ -382,7 +382,7 @@
   }
 
   /* =========================================================
-   * DSB — Disco/Trance Covers, Experimental
+   * DSB  - Disco/Trance Covers, Experimental
    * Hypnotic pulsing disco reflections in earthy olive tones,
    * concentric trance rings, dripping trails.
    * Hover: spots orbit faster, more sparkles, brighter
@@ -436,7 +436,7 @@
       }
     }
 
-    // Trance rings — center follows mouse on hover
+    // Trance rings  - center follows mouse on hover
     var cx = w * 0.5;
     var cy = h * 0.45;
     if (s.mx >= 0 && hv > 0.01) {
@@ -456,7 +456,7 @@
       ctx.stroke();
     }
 
-    // Disco spots — multi-coloured, bass drives size
+    // Disco spots  - multi-coloured, bass drives size
     var speedMult = 1 + hv * 1.5 + au.energy * 0.5;
     s.spots.forEach(function (spot) {
       var a = spot.angle + t * spot.speed * speedMult;
@@ -498,7 +498,7 @@
       ctx.fillRect(p.x, p.y, p.size, p.size * 3);
     });
 
-    // Sparkles — treble drives sparkle intensity
+    // Sparkles  - treble drives sparkle intensity
     var sparkleCount = 4 + Math.floor(hv * 8 + au.treble * 12);
     for (var k = 0; k < sparkleCount; k++) {
       var sx = hash(Math.floor(t * 12), k * 31) % w;
