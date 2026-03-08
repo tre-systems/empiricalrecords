@@ -2,22 +2,32 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
     <loc>https://www.empiricalrecords.com/</loc>
+    <lastmod>2026-03-08</lastmod>
     <changefreq>monthly</changefreq>
+    <priority>1.0</priority>
   </url>
   <url>
     <loc>https://www.empiricalrecords.com/artist-csu</loc>
+    <lastmod>2026-03-08</lastmod>
     <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
   </url>
   <url>
     <loc>https://www.empiricalrecords.com/artist-multivibrator</loc>
+    <lastmod>2026-03-08</lastmod>
     <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
   </url>
   <url>
     <loc>https://www.empiricalrecords.com/artist-uv</loc>
+    <lastmod>2026-03-08</lastmod>
     <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
   </url>
   <url>
     <loc>https://www.empiricalrecords.com/artist-dsb</loc>
+    <lastmod>2026-03-08</lastmod>
     <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
   </url>
 </urlset>
