@@ -2,8 +2,37 @@
     'use strict';
 
     const audio = new Audio();
+    audio.crossOrigin = 'anonymous';
     let playlist = [];
     let currentIndex = -1;
+
+    // Web Audio API for frequency analysis
+    var audioCtx = null;
+    var analyser = null;
+    var freqArray = null;
+
+    function initAudioContext() {
+        if (audioCtx) return;
+        try {
+            audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+            analyser = audioCtx.createAnalyser();
+            analyser.fftSize = 256;
+            analyser.smoothingTimeConstant = 0.82;
+            var source = audioCtx.createMediaElementSource(audio);
+            source.connect(analyser);
+            analyser.connect(audioCtx.destination);
+            freqArray = new Uint8Array(analyser.frequencyBinCount);
+            window.empiricalAudio = {
+                getFrequencyData: function() {
+                    analyser.getByteFrequencyData(freqArray);
+                    return freqArray;
+                },
+                binCount: analyser.frequencyBinCount
+            };
+        } catch (e) {
+            // Web Audio API not supported
+        }
+    }
 
     const playerEl = document.getElementById('player');
     const playBtn = document.getElementById('player-play');
@@ -64,6 +93,7 @@
     }
 
     function safePlay() {
+        initAudioContext();
         const playResult = audio.play();
         if (playResult && typeof playResult.catch === 'function') {
             playResult.catch(function() {

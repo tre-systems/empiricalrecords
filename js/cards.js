@@ -68,11 +68,13 @@
       requestAnimationFrame(loop);
       if (ts - last < 33) return;
       last = ts;
+      var audio = getAudioMetrics();
       canvases.forEach(function (c) {
         if (!c.visible) return;
         c.state.t += 0.016;
         // Smooth hover transition
         c.state.hoverSmooth = (c.state.hoverSmooth || 0) * 0.9 + c.state.hover * 0.1;
+        c.state.audio = audio;
         c.cfg.draw(c.ctx, c.state);
       });
     })(0);
@@ -100,13 +102,14 @@
   function drawCSU(ctx, s) {
     var w = s.w, h = s.h, t = s.t;
     var hv = s.hoverSmooth || 0;
+    var au = s.audio || { bass: 0, mid: 0, treble: 0, energy: 0 };
     ctx.fillStyle = '#1c1e18';
     ctx.fillRect(0, 0, w, h);
 
-    var seed = Math.floor(t * (10 + hv * 15));
+    var seed = Math.floor(t * (10 + hv * 15 + au.energy * 10));
     var cols = Math.floor(w / 5);
     var rows = Math.floor(h / 5);
-    var threshold = 25 + hv * 20;
+    var threshold = 25 + hv * 20 + au.energy * 25;
 
     for (var y = 0; y < rows; y++) {
       for (var x = 0; x < cols; x++) {
@@ -127,31 +130,31 @@
       }
     }
 
-    // Scan lines
-    for (var i = 0; i < 3 + Math.floor(hv * 3); i++) {
-      var scanY = ((t * (25 + i * 15) + i * 80) % (h + 40)) - 20;
+    // Scan lines — bass drives speed and brightness
+    for (var i = 0; i < 3 + Math.floor(hv * 3 + au.bass * 3); i++) {
+      var scanY = ((t * (25 + i * 15 + au.bass * 30) + i * 80) % (h + 40)) - 20;
       var grad = ctx.createLinearGradient(0, scanY - 10, 0, scanY + 10);
       grad.addColorStop(0, 'rgba(140, 160, 100, 0)');
-      grad.addColorStop(0.5, 'rgba(140, 160, 100, ' + (0.2 + hv * 0.15) + ')');
+      grad.addColorStop(0.5, 'rgba(140, 160, 100, ' + (0.2 + hv * 0.15 + au.energy * 0.2) + ')');
       grad.addColorStop(1, 'rgba(140, 160, 100, 0)');
       ctx.fillStyle = grad;
       ctx.fillRect(0, scanY - 10, w, 20);
     }
 
-    // Glitch blocks — more on hover
-    var glitchCount = hash(seed, 77) % (5 + Math.floor(hv * 8));
+    // Glitch blocks — energy drives intensity
+    var glitchCount = hash(seed, 77) % (5 + Math.floor(hv * 8 + au.energy * 10));
     for (var j = 0; j < glitchCount; j++) {
       var gy = hash(seed, j * 13 + 44) % h;
-      var gh = 2 + hash(seed, j * 17 + 55) % (6 + Math.floor(hv * 10));
+      var gh = 2 + hash(seed, j * 17 + 55) % (6 + Math.floor(hv * 10 + au.bass * 8));
       var shift = (hash(seed, j * 23 + 66) % 30) - 15;
-      ctx.fillStyle = 'rgba(120, 140, 80, ' + (0.15 + hv * 0.1) + ')';
+      ctx.fillStyle = 'rgba(120, 140, 80, ' + (0.15 + hv * 0.1 + au.energy * 0.15) + ')';
       ctx.fillRect(shift, gy, w, gh);
     }
 
-    if (hash(seed, 99) % 100 < 5 + hv * 20) {
+    if (hash(seed, 99) % 100 < 5 + hv * 20 + au.bass * 30) {
       var fx = hash(seed, 111) % (w * 0.6);
       var fy = hash(seed, 222) % (h * 0.8);
-      ctx.fillStyle = 'rgba(180, 200, 140, ' + (0.08 + hv * 0.08) + ')';
+      ctx.fillStyle = 'rgba(180, 200, 140, ' + (0.08 + hv * 0.08 + au.energy * 0.1) + ')';
       ctx.fillRect(fx, fy, 40 + hash(seed, 333) % 80, 20 + hash(seed, 444) % 30);
     }
   }
@@ -164,6 +167,7 @@
   function drawMultivibrator(ctx, s) {
     var w = s.w, h = s.h, t = s.t;
     var hv = s.hoverSmooth || 0;
+    var au = s.audio || { bass: 0, mid: 0, treble: 0, energy: 0 };
     ctx.fillStyle = '#141712';
     ctx.fillRect(0, 0, w, h);
 
@@ -188,11 +192,11 @@
     ];
 
     waves.forEach(function (wave) {
-      var phase = t * wave.speed * (1 + hv * 0.5);
-      var ampMult = 1 + hv * 0.6;
+      var phase = t * wave.speed * (1 + hv * 0.5 + au.mid * 0.4);
+      var ampMult = 1 + hv * 0.6 + au.energy * 1.2;
       ctx.beginPath();
-      ctx.strokeStyle = 'rgba(168, 184, 138, ' + (wave.alpha + hv * 0.2) + ')';
-      ctx.lineWidth = wave.width + hv * 0.5;
+      ctx.strokeStyle = 'rgba(168, 184, 138, ' + (wave.alpha + hv * 0.2 + au.energy * 0.3) + ')';
+      ctx.lineWidth = wave.width + hv * 0.5 + au.bass * 1.5;
 
       for (var x = 0; x <= w; x += 2) {
         // Mouse proximity distortion
@@ -211,14 +215,14 @@
     });
 
     // Glow
-    ctx.shadowColor = 'rgba(168, 184, 138, ' + (0.3 + hv * 0.3) + ')';
-    ctx.shadowBlur = 8 + hv * 8;
+    ctx.shadowColor = 'rgba(168, 184, 138, ' + (0.3 + hv * 0.3 + au.energy * 0.3) + ')';
+    ctx.shadowBlur = 8 + hv * 8 + au.bass * 12;
     ctx.beginPath();
     ctx.strokeStyle = 'rgba(168, 184, 138, ' + (0.15 + hv * 0.15) + ')';
     ctx.lineWidth = 3;
-    var phase0 = t * 0.6 * (1 + hv * 0.5);
+    var phase0 = t * 0.6 * (1 + hv * 0.5 + au.mid * 0.3);
     for (var x2 = 0; x2 <= w; x2 += 2) {
-      var amp0 = 35 * (1 + hv * 0.6);
+      var amp0 = 35 * (1 + hv * 0.6 + au.energy * 1.2);
       if (s.mx >= 0) {
         var dx2 = Math.abs(x2 - s.mx);
         if (dx2 < 100) amp0 += (1 - dx2 / 100) * 20;
@@ -241,12 +245,13 @@
   function drawUV(ctx, s) {
     var w = s.w, h = s.h, t = s.t;
     var hv = s.hoverSmooth || 0;
+    var au = s.audio || { bass: 0, mid: 0, treble: 0, energy: 0 };
 
     // Warmer, slightly lighter background
     ctx.fillStyle = '#25211a';
     ctx.fillRect(0, 0, w, h);
 
-    // Flowing organic layers — brighter, more visible
+    // Flowing organic layers — bass drives amplitude, mid drives speed
     var layers = [
       { yBase: 0.7,  color: [130, 110, 60],  amp: 40, freq: 0.006, speed: 0.25, alpha: 0.35 },
       { yBase: 0.58, color: [100, 120, 65],  amp: 35, freq: 0.008, speed: 0.35, alpha: 0.3 },
@@ -255,7 +260,8 @@
     ];
 
     layers.forEach(function (layer) {
-      var phase = t * layer.speed * (1 + hv * 0.3);
+      var phase = t * layer.speed * (1 + hv * 0.3 + au.mid * 0.4);
+      var ampBoost = 1 + au.bass * 0.8;
       ctx.beginPath();
       ctx.moveTo(0, h);
 
@@ -268,19 +274,19 @@
           yOff = (s.my - h * layer.yBase) * distFactor * 0.15 * hv;
         }
         var y = h * layer.yBase + yOff +
-          Math.sin(x * layer.freq + phase) * layer.amp +
-          Math.sin(x * layer.freq * 1.8 + phase * 1.3) * (layer.amp * 0.4) +
+          Math.sin(x * layer.freq + phase) * layer.amp * ampBoost +
+          Math.sin(x * layer.freq * 1.8 + phase * 1.3) * (layer.amp * 0.4) * ampBoost +
           Math.cos(x * layer.freq * 0.5 + phase * 0.6) * (layer.amp * 0.25);
         ctx.lineTo(x, y);
       }
 
       ctx.lineTo(w, h);
       ctx.closePath();
-      ctx.fillStyle = 'rgba(' + layer.color[0] + ',' + layer.color[1] + ',' + layer.color[2] + ',' + (layer.alpha + hv * 0.15) + ')';
+      ctx.fillStyle = 'rgba(' + layer.color[0] + ',' + layer.color[1] + ',' + layer.color[2] + ',' + (layer.alpha + hv * 0.15 + au.energy * 0.15) + ')';
       ctx.fill();
     });
 
-    // Warm glow spots — brighter
+    // Warm glow spots — pulse with mid frequencies
     var glows = [
       { cx: 0.3, cy: 0.35, r: 0.25, speed: 0.2,  color: [160, 130, 60] },
       { cx: 0.7, cy: 0.45, r: 0.22, speed: 0.15, color: [130, 140, 70] },
@@ -288,7 +294,7 @@
     ];
 
     glows.forEach(function (g) {
-      var pulse = 1 + Math.sin(t * g.speed) * 0.2 + hv * 0.3;
+      var pulse = 1 + Math.sin(t * g.speed) * 0.2 + hv * 0.3 + au.mid * 0.5;
       var drift = Math.sin(t * g.speed * 0.5) * 0.03;
       var x = (g.cx + drift) * w;
       var y = (g.cy + Math.cos(t * g.speed * 0.7) * 0.02) * h;
@@ -300,23 +306,24 @@
       }
 
       var r = g.r * Math.min(w, h) * pulse;
+      var glowAlpha = 0.25 + hv * 0.15 + au.energy * 0.2;
       var grad = ctx.createRadialGradient(x, y, 0, x, y, r);
-      grad.addColorStop(0, 'rgba(' + g.color[0] + ',' + g.color[1] + ',' + g.color[2] + ', ' + (0.25 + hv * 0.15) + ')');
-      grad.addColorStop(0.5, 'rgba(' + g.color[0] + ',' + g.color[1] + ',' + g.color[2] + ', ' + (0.08 + hv * 0.05) + ')');
+      grad.addColorStop(0, 'rgba(' + g.color[0] + ',' + g.color[1] + ',' + g.color[2] + ', ' + glowAlpha + ')');
+      grad.addColorStop(0.5, 'rgba(' + g.color[0] + ',' + g.color[1] + ',' + g.color[2] + ', ' + (glowAlpha * 0.32) + ')');
       grad.addColorStop(1, 'rgba(37, 33, 26, 0)');
       ctx.fillStyle = grad;
       ctx.fillRect(0, 0, w, h);
     });
 
-    // Guitar strings
-    ctx.lineWidth = 0.5 + hv * 0.5;
+    // Guitar strings — treble drives vibration amplitude
+    ctx.lineWidth = 0.5 + hv * 0.5 + au.energy * 0.5;
     for (var i = 0; i < 6; i++) {
       var stringY = h * (0.2 + i * 0.1);
-      var vibAmp = (2 + Math.sin(t * (0.5 + i * 0.15)) * 3) * (1 + hv * 1.5);
+      var vibAmp = (2 + Math.sin(t * (0.5 + i * 0.15)) * 3) * (1 + hv * 1.5 + au.treble * 4);
       var vibFreq = 0.02 + i * 0.005;
-      var stringPhase = t * (1 + i * 0.2) * (1 + hv * 0.3);
+      var stringPhase = t * (1 + i * 0.2) * (1 + hv * 0.3 + au.mid * 0.3);
       ctx.beginPath();
-      ctx.strokeStyle = 'rgba(180, 155, 85, ' + (0.12 + i * 0.02 + hv * 0.1) + ')';
+      ctx.strokeStyle = 'rgba(180, 155, 85, ' + (0.12 + i * 0.02 + hv * 0.1 + au.treble * 0.2) + ')';
       for (var x3 = 0; x3 <= w; x3 += 3) {
         var y3 = stringY + Math.sin(x3 * vibFreq + stringPhase) * vibAmp;
         if (x3 === 0) ctx.moveTo(x3, y3);
@@ -335,6 +342,7 @@
   function drawDSB(ctx, s) {
     var w = s.w, h = s.h, t = s.t;
     var hv = s.hoverSmooth || 0;
+    var au = s.audio || { bass: 0, mid: 0, treble: 0, energy: 0 };
 
     // First frame: solid fill. After that, fade for trails
     if (!s.init) {
@@ -390,8 +398,8 @@
 
     var ringColors = [[200, 30, 50], [220, 160, 30], [200, 40, 120], [230, 80, 60]];
     for (var r = 0; r < 4 + Math.floor(hv * 3); r++) {
-      var radius = 20 + r * 30 + Math.sin(t * 1.5 + r) * 10;
-      var ringAlpha = 0.08 + Math.sin(t * 2 + r * 0.8) * 0.05 + hv * 0.05;
+      var radius = 20 + r * 30 + Math.sin(t * 1.5 + r) * 10 + au.mid * 15;
+      var ringAlpha = 0.08 + Math.sin(t * 2 + r * 0.8) * 0.05 + hv * 0.05 + au.mid * 0.1;
       var rc = ringColors[r % ringColors.length];
       ctx.beginPath();
       ctx.arc(cx, cy, radius, 0, Math.PI * 2);
@@ -400,18 +408,18 @@
       ctx.stroke();
     }
 
-    // Disco spots — multi-coloured
-    var speedMult = 1 + hv * 1.5;
+    // Disco spots — multi-coloured, bass drives size
+    var speedMult = 1 + hv * 1.5 + au.energy * 0.5;
     s.spots.forEach(function (spot) {
       var a = spot.angle + t * spot.speed * speedMult;
       var x = cx + Math.cos(a) * w * spot.dist;
       var y = cy + Math.sin(a * 0.8) * h * spot.dist * 0.7;
       var pulse = 0.5 + Math.sin(t * 3.5 * speedMult + spot.angle * 2) * 0.5;
-      var sz = spot.size * pulse * (1 + hv * 0.4);
+      var sz = spot.size * pulse * (1 + hv * 0.4 + au.bass * 1.0);
       var c = spot.color;
 
       var grad = ctx.createRadialGradient(x, y, 0, x, y, sz * 4);
-      var alpha = spot.brightness * pulse * (0.65 + hv * 0.3);
+      var alpha = spot.brightness * pulse * (0.65 + hv * 0.3 + au.bass * 0.4);
       grad.addColorStop(0, 'rgba(' + c[0] + ',' + c[1] + ',' + c[2] + ',' + alpha + ')');
       grad.addColorStop(0.3, 'rgba(' + c[0] + ',' + c[1] + ',' + c[2] + ',' + (alpha * 0.3) + ')');
       grad.addColorStop(1, 'rgba(' + c[0] + ',' + c[1] + ',' + c[2] + ',0)');
@@ -442,17 +450,54 @@
       ctx.fillRect(p.x, p.y, p.size, p.size * 3);
     });
 
-    // Sparkles — more on hover
-    var sparkleCount = 4 + Math.floor(hv * 8);
+    // Sparkles — treble drives sparkle intensity
+    var sparkleCount = 4 + Math.floor(hv * 8 + au.treble * 12);
     for (var k = 0; k < sparkleCount; k++) {
       var sx = hash(Math.floor(t * 12), k * 31) % w;
       var sy = hash(Math.floor(t * 12), k * 47 + 100) % h;
       var sparkle = Math.sin(t * 10 + k * 1.7) * 0.5 + 0.5;
-      if (sparkle > (0.65 - hv * 0.2)) {
-        ctx.fillStyle = 'rgba(255, 210, 210, ' + (sparkle * (0.4 + hv * 0.3)) + ')';
+      if (sparkle > (0.65 - hv * 0.2 - au.treble * 0.3)) {
+        ctx.fillStyle = 'rgba(255, 210, 210, ' + (sparkle * (0.4 + hv * 0.3 + au.treble * 0.3)) + ')';
         ctx.fillRect(sx - 1, sy - 1, 2, 2);
       }
     }
+  }
+
+  /* =========================================================
+   * Audio-reactive helpers
+   * ========================================================= */
+  var smoothAudio = { bass: 0, mid: 0, treble: 0, energy: 0 };
+
+  function getAudioMetrics() {
+    if (!window.empiricalAudio) return smoothAudio;
+    var data = window.empiricalAudio.getFrequencyData();
+    var bc = window.empiricalAudio.binCount;
+    var bassEnd = Math.floor(bc * 0.08);
+    var midEnd = Math.floor(bc * 0.35);
+    var trebleEnd = Math.floor(bc * 0.65);
+
+    var raw = {
+      bass: avgRange(data, 0, bassEnd),
+      mid: avgRange(data, bassEnd, midEnd),
+      treble: avgRange(data, midEnd, trebleEnd),
+      energy: avgRange(data, 0, trebleEnd)
+    };
+
+    // Smooth to avoid jitter
+    var ease = 0.25;
+    smoothAudio.bass += (raw.bass - smoothAudio.bass) * ease;
+    smoothAudio.mid += (raw.mid - smoothAudio.mid) * ease;
+    smoothAudio.treble += (raw.treble - smoothAudio.treble) * ease;
+    smoothAudio.energy += (raw.energy - smoothAudio.energy) * ease;
+
+    return smoothAudio;
+  }
+
+  function avgRange(data, start, end) {
+    if (end <= start) return 0;
+    var sum = 0;
+    for (var i = start; i < end; i++) sum += data[i];
+    return sum / ((end - start) * 255);
   }
 
   /* =========================================================
