@@ -338,6 +338,9 @@
 
     // Init
     initPlaylist();
+    if (playlist.length > 0) {
+        loadTrack(0);
+    }
     updatePlayButton();
     updateSeekAria();
 })();
