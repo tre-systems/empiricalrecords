@@ -281,9 +281,10 @@
 
     function openLightbox(triggerEl, src, alt) {
         if (!lightboxEl) return;
+        var fullSrc = triggerEl.dataset.full || src;
         var img = lightboxEl.querySelector('img');
         if (img) {
-            img.src = src;
+            img.src = fullSrc;
             img.alt = alt || 'Gallery image';
         }
         lightboxReturnTarget = triggerEl;
@@ -368,9 +369,6 @@
 
     // Init
     initPlaylist();
-    if (playlist.length > 0) {
-        loadTrack(0);
-    }
     updatePlayButton();
     updateSeekAria();
 })();

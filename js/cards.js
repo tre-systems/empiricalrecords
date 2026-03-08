@@ -72,8 +72,8 @@
       canvases.forEach(function (c) {
         if (!c.visible) return;
         c.state.t += 0.016;
-        // Smooth hover transition
-        c.state.hoverSmooth = (c.state.hoverSmooth || 0) * 0.9 + c.state.hover * 0.1;
+        // Smooth hover transition (gradual ease in/out)
+        c.state.hoverSmooth = (c.state.hoverSmooth || 0) * 0.96 + c.state.hover * 0.04;
         c.state.audio = audio;
         c.cfg.draw(c.ctx, c.state);
       });
