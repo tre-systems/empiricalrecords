@@ -106,62 +106,76 @@
     ctx.fillStyle = '#1c1e18';
     ctx.fillRect(0, 0, w, h);
 
-    var seed = Math.floor(t * (10 + hv * 15 + au.energy * 10));
+    // Noise seed — bass makes it churn faster
+    var seed = Math.floor(t * (10 + hv * 15 + au.energy * 20 + au.bass * 15));
     var cols = Math.floor(w / 5);
     var rows = Math.floor(h / 5);
-    var threshold = 25 + hv * 20 + au.energy * 25;
+    // Audio strongly drives noise density
+    var threshold = 20 + hv * 20 + au.energy * 40 + au.bass * 15;
 
     for (var y = 0; y < rows; y++) {
       for (var x = 0; x < cols; x++) {
         var v = hash(x + seed * 137, y + seed * 251) % 100;
         if (v < threshold) {
-          var b = 0.2 + (v / threshold) * 0.6;
+          var b = 0.15 + (v / threshold) * 0.5;
+          // Bass pulses brightness across whole field
+          b += au.bass * 0.3;
           // Mouse proximity boost
           if (s.mx >= 0) {
             var dx = x * 5 - s.mx, dy = y * 5 - s.my;
             var dist = Math.sqrt(dx * dx + dy * dy);
             if (dist < 80) b = Math.min(1, b + (1 - dist / 80) * 0.5);
           }
-          var r = Math.floor(80 + b * 50);
-          var g = Math.floor(90 + b * 60);
+          // Treble adds flicker — some pixels flash brighter
+          if (au.treble > 0.2 && hash(x + seed, y) % 100 < au.treble * 40) {
+            b = Math.min(1, b + au.treble * 0.5);
+          }
+          var r = Math.floor(80 + b * 50 + au.energy * 30);
+          var g = Math.floor(90 + b * 60 + au.energy * 20);
           ctx.fillStyle = 'rgba(' + r + ',' + g + ',70,' + b + ')';
           ctx.fillRect(x * 5, y * 5, 4, 4);
         }
       }
     }
 
-    // Scan lines — bass drives speed and brightness
-    for (var i = 0; i < 3 + Math.floor(hv * 3 + au.bass * 3); i++) {
-      var scanY = ((t * (25 + i * 15 + au.bass * 30) + i * 80) % (h + 40)) - 20;
+    // Scan lines — bass drives speed and brightness, more lines with energy
+    var scanCount = 3 + Math.floor(hv * 3 + au.bass * 5 + au.energy * 3);
+    for (var i = 0; i < scanCount; i++) {
+      var scanSpeed = 25 + i * 15 + au.bass * 50;
+      var scanY = ((t * scanSpeed + i * 80) % (h + 40)) - 20;
+      var scanAlpha = 0.2 + hv * 0.15 + au.energy * 0.35 + au.bass * 0.2;
       var grad = ctx.createLinearGradient(0, scanY - 10, 0, scanY + 10);
       grad.addColorStop(0, 'rgba(140, 160, 100, 0)');
-      grad.addColorStop(0.5, 'rgba(140, 160, 100, ' + (0.2 + hv * 0.15 + au.energy * 0.2) + ')');
+      grad.addColorStop(0.5, 'rgba(140, 160, 100, ' + Math.min(0.8, scanAlpha) + ')');
       grad.addColorStop(1, 'rgba(140, 160, 100, 0)');
       ctx.fillStyle = grad;
       ctx.fillRect(0, scanY - 10, w, 20);
     }
 
-    // Glitch blocks — energy drives intensity
-    var glitchCount = hash(seed, 77) % (5 + Math.floor(hv * 8 + au.energy * 10));
+    // Glitch blocks — energy and bass drive intensity and size
+    var glitchCount = hash(seed, 77) % (4 + Math.floor(hv * 8 + au.energy * 15 + au.bass * 8));
     for (var j = 0; j < glitchCount; j++) {
       var gy = hash(seed, j * 13 + 44) % h;
-      var gh = 2 + hash(seed, j * 17 + 55) % (6 + Math.floor(hv * 10 + au.bass * 8));
-      var shift = (hash(seed, j * 23 + 66) % 30) - 15;
-      ctx.fillStyle = 'rgba(120, 140, 80, ' + (0.15 + hv * 0.1 + au.energy * 0.15) + ')';
+      var gh = 2 + hash(seed, j * 17 + 55) % (6 + Math.floor(hv * 10 + au.bass * 14));
+      var shift = (hash(seed, j * 23 + 66) % (30 + Math.floor(au.energy * 40))) - 15 - Math.floor(au.energy * 20);
+      ctx.fillStyle = 'rgba(120, 140, 80, ' + Math.min(0.6, 0.12 + hv * 0.1 + au.energy * 0.25 + au.bass * 0.15) + ')';
       ctx.fillRect(shift, gy, w, gh);
     }
 
-    if (hash(seed, 99) % 100 < 5 + hv * 20 + au.bass * 30) {
+    // Big flash blocks on heavy bass hits
+    if (hash(seed, 99) % 100 < 5 + hv * 20 + au.bass * 45 + au.energy * 15) {
       var fx = hash(seed, 111) % (w * 0.6);
       var fy = hash(seed, 222) % (h * 0.8);
-      ctx.fillStyle = 'rgba(180, 200, 140, ' + (0.08 + hv * 0.08 + au.energy * 0.1) + ')';
+      var flashAlpha = 0.08 + hv * 0.08 + au.energy * 0.15 + au.bass * 0.12;
+      ctx.fillStyle = 'rgba(180, 200, 140, ' + Math.min(0.5, flashAlpha) + ')';
       ctx.fillRect(fx, fy, 40 + hash(seed, 333) % 80, 20 + hash(seed, 444) % 30);
     }
   }
 
   /* =========================================================
    * Multivibrator — Minimal Experimental Electronic
-   * Clean oscilloscope sine waves, precise, mathematical.
+   * Oscilloscope-style waves that wiggle with the music.
+   * Audio directly modulates wave shape and frequency.
    * Hover: waves react — amplitude increases, frequency shifts
    * ========================================================= */
   function drawMultivibrator(ctx, s) {
@@ -184,51 +198,66 @@
     ctx.strokeStyle = 'rgba(168, 184, 138, 0.08)';
     ctx.beginPath(); ctx.moveTo(0, h / 2); ctx.lineTo(w, h / 2); ctx.stroke();
 
+    // Oscilloscope waves — audio directly drives amplitude and wobble
     var waves = [
-      { yOff: 0.5, freq: 0.012, amp: 35, speed: 0.6, alpha: 0.7, width: 1.5 },
-      { yOff: 0.5, freq: 0.008, amp: 25, speed: 0.45, alpha: 0.4, width: 1.2 },
-      { yOff: 0.5, freq: 0.018, amp: 15, speed: 0.8, alpha: 0.3, width: 1.0 },
-      { yOff: 0.5, freq: 0.005, amp: 50, speed: 0.3, alpha: 0.2, width: 0.8 },
+      { yOff: 0.5, baseFreq: 0.012, baseAmp: 20, speed: 0.6, alpha: 0.7, width: 1.5, audioBand: 'bass', audioMult: 2.5 },
+      { yOff: 0.5, baseFreq: 0.008, baseAmp: 15, speed: 0.45, alpha: 0.4, width: 1.2, audioBand: 'mid', audioMult: 2.0 },
+      { yOff: 0.5, baseFreq: 0.018, baseAmp: 8,  speed: 0.8, alpha: 0.3, width: 1.0, audioBand: 'treble', audioMult: 3.0 },
+      { yOff: 0.5, baseFreq: 0.005, baseAmp: 30, speed: 0.3, alpha: 0.2, width: 0.8, audioBand: 'energy', audioMult: 1.8 },
     ];
 
     waves.forEach(function (wave) {
-      var phase = t * wave.speed * (1 + hv * 0.5 + au.mid * 0.4);
-      var ampMult = 1 + hv * 0.6 + au.energy * 1.2;
+      var audioLevel = au[wave.audioBand] || 0;
+      // Audio drives frequency wobble — oscilloscope-style jitter
+      var freqWobble = 1 + audioLevel * 0.8 + au.treble * 0.3;
+      var phase = t * wave.speed * (1 + hv * 0.5 + audioLevel * 0.6);
+      // Amplitude strongly driven by audio
+      var ampMult = 1 + hv * 0.6 + audioLevel * wave.audioMult;
       ctx.beginPath();
-      ctx.strokeStyle = 'rgba(168, 184, 138, ' + (wave.alpha + hv * 0.2 + au.energy * 0.3) + ')';
-      ctx.lineWidth = wave.width + hv * 0.5 + au.bass * 1.5;
+      ctx.strokeStyle = 'rgba(168, 184, 138, ' + Math.min(1, wave.alpha + hv * 0.2 + audioLevel * 0.4) + ')';
+      ctx.lineWidth = wave.width + hv * 0.5 + audioLevel * 2;
 
       for (var x = 0; x <= w; x += 2) {
+        var localAmp = wave.baseAmp * ampMult;
+        var localFreq = wave.baseFreq * freqWobble;
         // Mouse proximity distortion
-        var localAmp = wave.amp * ampMult;
         if (s.mx >= 0) {
           var dx = Math.abs(x - s.mx);
-          if (dx < 100) localAmp += (1 - dx / 100) * 20 * hv;
+          if (dx < 100) {
+            localAmp += (1 - dx / 100) * 20 * hv;
+            localFreq *= 1 + (1 - dx / 100) * 0.5 * hv;
+          }
         }
+        // Oscilloscope-style compound wave with audio-driven harmonics
         var y = h * wave.yOff +
-          Math.sin(x * wave.freq + phase) * localAmp +
-          Math.sin(x * wave.freq * 2.5 + phase * 0.7) * (localAmp * 0.2);
+          Math.sin(x * localFreq + phase) * localAmp +
+          Math.sin(x * localFreq * 2.5 + phase * 0.7) * (localAmp * 0.15 * (1 + audioLevel * 2)) +
+          Math.sin(x * localFreq * 4.1 + phase * 1.3) * (localAmp * 0.08 * audioLevel * 3);
         if (x === 0) ctx.moveTo(x, y);
         else ctx.lineTo(x, y);
       }
       ctx.stroke();
     });
 
-    // Glow
-    ctx.shadowColor = 'rgba(168, 184, 138, ' + (0.3 + hv * 0.3 + au.energy * 0.3) + ')';
-    ctx.shadowBlur = 8 + hv * 8 + au.bass * 12;
+    // Primary glow trace — strongest audio response
+    ctx.shadowColor = 'rgba(168, 184, 138, ' + Math.min(1, 0.3 + hv * 0.3 + au.energy * 0.5) + ')';
+    ctx.shadowBlur = 8 + hv * 8 + au.bass * 15;
     ctx.beginPath();
-    ctx.strokeStyle = 'rgba(168, 184, 138, ' + (0.15 + hv * 0.15) + ')';
-    ctx.lineWidth = 3;
-    var phase0 = t * 0.6 * (1 + hv * 0.5 + au.mid * 0.3);
+    ctx.strokeStyle = 'rgba(168, 184, 138, ' + Math.min(0.6, 0.15 + hv * 0.15 + au.energy * 0.2) + ')';
+    ctx.lineWidth = 2 + au.energy * 2;
+    var phase0 = t * 0.6 * (1 + hv * 0.5 + au.mid * 0.5);
+    var glowFreqWobble = 1 + au.bass * 0.6 + au.treble * 0.3;
     for (var x2 = 0; x2 <= w; x2 += 2) {
-      var amp0 = 35 * (1 + hv * 0.6 + au.energy * 1.2);
+      var amp0 = 20 * (1 + hv * 0.6 + au.energy * 2.5);
+      var freq0 = 0.012 * glowFreqWobble;
       if (s.mx >= 0) {
         var dx2 = Math.abs(x2 - s.mx);
         if (dx2 < 100) amp0 += (1 - dx2 / 100) * 20;
       }
-      var y2 = h * 0.5 + Math.sin(x2 * 0.012 + phase0) * amp0 +
-        Math.sin(x2 * 0.03 + phase0 * 0.7) * 7;
+      var y2 = h * 0.5 +
+        Math.sin(x2 * freq0 + phase0) * amp0 +
+        Math.sin(x2 * freq0 * 3 + phase0 * 0.7) * (amp0 * 0.1 * (1 + au.treble * 3)) +
+        Math.sin(x2 * freq0 * 5.2 + phase0 * 1.5) * (amp0 * 0.05 * au.energy * 4);
       if (x2 === 0) ctx.moveTo(x2, y2);
       else ctx.lineTo(x2, y2);
     }
@@ -238,9 +267,9 @@
 
   /* =========================================================
    * UV — Guitar Compositions, Organic, Laid-back
-   * Warm flowing forms, gentle undulating shapes,
-   * earthy amber/green tones. Brighter, more visible.
-   * Hover: glow intensifies, layers shift more
+   * Warm flowing forms with graphic-equalizer wavy lines
+   * that follow the music's frequency spectrum.
+   * Hover: glow intensifies, EQ lines react more
    * ========================================================= */
   function drawUV(ctx, s) {
     var w = s.w, h = s.h, t = s.t;
@@ -267,7 +296,6 @@
 
       for (var x = 0; x <= w; x += 3) {
         var yOff = 0;
-        // Mouse attracts the layers toward it
         if (s.mx >= 0 && hv > 0.01) {
           var dx = x - s.mx;
           var distFactor = Math.exp(-(dx * dx) / (15000));
@@ -299,7 +327,6 @@
       var x = (g.cx + drift) * w;
       var y = (g.cy + Math.cos(t * g.speed * 0.7) * 0.02) * h;
 
-      // Move glow toward mouse on hover
       if (s.mx >= 0 && hv > 0.01) {
         x += (s.mx - x) * 0.1 * hv;
         y += (s.my - y) * 0.1 * hv;
@@ -315,27 +342,47 @@
       ctx.fillRect(0, 0, w, h);
     });
 
-    // Guitar strings — treble drives vibration amplitude
-    ctx.lineWidth = 0.5 + hv * 0.5 + au.energy * 0.5;
-    for (var i = 0; i < 6; i++) {
-      var stringY = h * (0.2 + i * 0.1);
-      var vibAmp = (2 + Math.sin(t * (0.5 + i * 0.15)) * 3) * (1 + hv * 1.5 + au.treble * 4);
-      var vibFreq = 0.02 + i * 0.005;
-      var stringPhase = t * (1 + i * 0.2) * (1 + hv * 0.3 + au.mid * 0.3);
+    // Graphic equalizer wavy lines — each band driven by a frequency range
+    var eqBands = [
+      { yBase: 0.15, band: 'bass',   baseAmp: 8,  freq: 0.015, speed: 0.4, color: [180, 155, 85] },
+      { yBase: 0.25, band: 'bass',   baseAmp: 6,  freq: 0.012, speed: 0.5, color: [170, 145, 75] },
+      { yBase: 0.35, band: 'mid',    baseAmp: 5,  freq: 0.018, speed: 0.6, color: [160, 140, 80] },
+      { yBase: 0.45, band: 'mid',    baseAmp: 5,  freq: 0.022, speed: 0.7, color: [150, 135, 75] },
+      { yBase: 0.55, band: 'mid',    baseAmp: 4,  freq: 0.025, speed: 0.8, color: [145, 150, 80] },
+      { yBase: 0.65, band: 'treble', baseAmp: 3,  freq: 0.03,  speed: 0.9, color: [140, 155, 85] },
+      { yBase: 0.75, band: 'treble', baseAmp: 3,  freq: 0.035, speed: 1.0, color: [135, 145, 80] },
+      { yBase: 0.85, band: 'energy', baseAmp: 4,  freq: 0.02,  speed: 0.55, color: [155, 140, 70] },
+    ];
+
+    eqBands.forEach(function (eq) {
+      var audioLevel = au[eq.band] || 0;
+      var reactiveAmp = eq.baseAmp + audioLevel * 25 + hv * 5;
+      var phase = t * eq.speed * (1 + hv * 0.3 + audioLevel * 0.5);
+
       ctx.beginPath();
-      ctx.strokeStyle = 'rgba(180, 155, 85, ' + (0.12 + i * 0.02 + hv * 0.1 + au.treble * 0.2) + ')';
-      for (var x3 = 0; x3 <= w; x3 += 3) {
-        var y3 = stringY + Math.sin(x3 * vibFreq + stringPhase) * vibAmp;
+      var alpha = 0.15 + audioLevel * 0.4 + hv * 0.1;
+      ctx.strokeStyle = 'rgba(' + eq.color[0] + ',' + eq.color[1] + ',' + eq.color[2] + ',' + Math.min(0.7, alpha) + ')';
+      ctx.lineWidth = 0.8 + audioLevel * 2 + hv * 0.5;
+
+      for (var x3 = 0; x3 <= w; x3 += 2) {
+        var localAmp = reactiveAmp;
+        if (s.mx >= 0 && hv > 0.01) {
+          var dx3 = Math.abs(x3 - s.mx);
+          if (dx3 < 120) localAmp += (1 - dx3 / 120) * 12 * hv;
+        }
+        var y3 = h * eq.yBase +
+          Math.sin(x3 * eq.freq + phase) * localAmp +
+          Math.sin(x3 * eq.freq * 2.3 + phase * 1.4) * (localAmp * 0.3);
         if (x3 === 0) ctx.moveTo(x3, y3);
         else ctx.lineTo(x3, y3);
       }
       ctx.stroke();
-    }
+    });
   }
 
   /* =========================================================
    * DSB — Disco/Trance Covers, Experimental
-   * Hypnotic pulsing disco reflections in blood-red,
+   * Hypnotic pulsing disco reflections in earthy olive tones,
    * concentric trance rings, dripping trails.
    * Hover: spots orbit faster, more sparkles, brighter
    * ========================================================= */
@@ -346,10 +393,10 @@
 
     // First frame: solid fill. After that, fade for trails
     if (!s.init) {
-      ctx.fillStyle = '#140808';
+      ctx.fillStyle = '#1c1e18';
       ctx.fillRect(0, 0, w, h);
     } else {
-      ctx.fillStyle = 'rgba(20, 8, 8, ' + (0.12 - hv * 0.04) + ')';
+      ctx.fillStyle = 'rgba(28, 30, 24, ' + (0.12 - hv * 0.04) + ')';
       ctx.fillRect(0, 0, w, h);
     }
 
@@ -357,15 +404,15 @@
       s.init = true;
       s.spots = [];
       s.drips = [];
-      // Disco colours: reds, pinks, golds, magentas
+      // Earthy disco: olives, ambers, sage, bronze
       var colors = [
-        [220, 30, 40],   // red
-        [200, 20, 80],   // crimson-pink
-        [220, 160, 30],  // gold
-        [200, 40, 120],  // magenta
-        [180, 30, 30],   // dark red
-        [230, 80, 60],   // coral
-        [200, 180, 40],  // amber
+        [130, 150, 60],  // olive green
+        [170, 150, 50],  // amber gold
+        [100, 125, 55],  // forest green
+        [150, 120, 55],  // bronze
+        [85, 105, 50],   // dark olive
+        [155, 165, 75],  // sage
+        [120, 135, 60],  // moss
       ];
       for (var i = 0; i < 16; i++) {
         s.spots.push({
@@ -396,7 +443,7 @@
       cy += (s.my - cy) * 0.3 * hv;
     }
 
-    var ringColors = [[200, 30, 50], [220, 160, 30], [200, 40, 120], [230, 80, 60]];
+    var ringColors = [[120, 140, 60], [170, 150, 50], [100, 125, 55], [155, 165, 75]];
     for (var r = 0; r < 4 + Math.floor(hv * 3); r++) {
       var radius = 20 + r * 30 + Math.sin(t * 1.5 + r) * 10 + au.mid * 15;
       var ringAlpha = 0.08 + Math.sin(t * 2 + r * 0.8) * 0.05 + hv * 0.05 + au.mid * 0.1;
@@ -426,7 +473,7 @@
       ctx.fillStyle = grad;
       ctx.fillRect(x - sz * 4, y - sz * 4, sz * 8, sz * 8);
 
-      // Bright white-ish center
+      // Bright center
       ctx.beginPath();
       ctx.arc(x, y, sz * 0.4, 0, Math.PI * 2);
       var lightR = Math.min(255, c[0] + 80);
@@ -446,7 +493,7 @@
         p.life = 0.5 + Math.random() * 0.5;
         p.vy = 0.2 + Math.random() * 0.6;
       }
-      ctx.fillStyle = 'rgba(150, 10, 10, ' + (p.life * 0.5) + ')';
+      ctx.fillStyle = 'rgba(80, 100, 45, ' + (p.life * 0.5) + ')';
       ctx.fillRect(p.x, p.y, p.size, p.size * 3);
     });
 
@@ -457,7 +504,7 @@
       var sy = hash(Math.floor(t * 12), k * 47 + 100) % h;
       var sparkle = Math.sin(t * 10 + k * 1.7) * 0.5 + 0.5;
       if (sparkle > (0.65 - hv * 0.2 - au.treble * 0.3)) {
-        ctx.fillStyle = 'rgba(255, 210, 210, ' + (sparkle * (0.4 + hv * 0.3 + au.treble * 0.3)) + ')';
+        ctx.fillStyle = 'rgba(220, 215, 175, ' + (sparkle * (0.4 + hv * 0.3 + au.treble * 0.3)) + ')';
         ctx.fillRect(sx - 1, sy - 1, 2, 2);
       }
     }
