@@ -23,6 +23,7 @@ Static site — HTML, CSS, vanilla JS. No build step, no framework.
 - **Audio player**: Custom HTML5 audio player with keyboard navigation, auto-advances through all tracks (`js/player.js`)
 - **Audio-reactive visuals**: Web Audio API frequency analysis feeds into canvas animations — each artist's visuals respond to bass, mid, and treble
 - **Gallery**: Lightbox viewer for archival photos and artwork
+- **SEO / sharing**: Per-page Open Graph images (1200×630), `summary_large_image` Twitter cards, SVG favicon, sitemap with priorities
 - **Hosting**: JustHost shared hosting via FTP
 - **Deployment**: `python3 upload.py` — FTP upload with verification
 
@@ -43,11 +44,16 @@ artist-multivibrator.html  Multivibrator artist page
 artist-uv.html          UV artist page
 artist-dsb.html         Disco Suicide Bomber artist page
 404.html                Custom error page
+sitemap.xml             XML sitemap
+robots.txt              Crawler directives
 css/style.css           All styles
 js/cards.js             Generative canvas animations
 js/player.js            Audio player + lightbox
+images/og/              Open Graph share images (1200×630)
+images/favicon.svg      SVG favicon
+images/apple-touch-icon.png  iOS home screen icon
 upload.py               FTP deployment script
-.htaccess               URL rewriting + security headers
+.htaccess               URL rewriting, security headers, GZIP, caching
 CSU/                    CSU audio files + images
 Multivibrator/          Multivibrator audio files
 UV/                     UV audio files + artwork
