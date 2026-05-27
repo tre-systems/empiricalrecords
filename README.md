@@ -18,7 +18,7 @@ Independent archive of experimental electronic music from the 1990s and early 20
 
 **Live**: [www.empiricalrecords.com](https://www.empiricalrecords.com)
 
-All releases are under [Creative Commons BY-SA 1.0](https://creativecommons.org/licenses/by-sa/1.0/).
+All releases are under [Creative Commons BY-SA 1.0](https://creativecommons.org/licenses/by-sa/1.0/). The website code is MIT licensed; see [LICENSE](LICENSE) for the split code/media terms.
 
 ## Artists
 

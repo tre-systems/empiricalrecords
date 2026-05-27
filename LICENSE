@@ -1,0 +1,22 @@
+empirical records Repository Licensing
+
+This repository contains both software code and archival media. They are
+licensed separately.
+
+Software code
+-------------
+
+The website source code, JavaScript, CSS, deployment scripts, and other
+software files are licensed under the MIT License. See LICENSE-CODE.
+
+Media and editorial archive
+---------------------------
+
+The empirical records audio releases, cover artwork, archival photographs,
+artist/release descriptions, and other non-code media are licensed under the
+Creative Commons Attribution-ShareAlike 1.0 Generic License where empirical
+records or the listed artists own or control the relevant rights. See
+LICENSE-MEDIA.
+
+Third-party names, logos, service marks, and embedded platform assets are not
+licensed except where their own terms allow it.
