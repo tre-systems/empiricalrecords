@@ -10,6 +10,7 @@ import sys
 import time
 import urllib.request
 import urllib.error
+import json
 from ftplib import FTP_TLS, FTP
 from pathlib import Path
 
@@ -184,11 +185,25 @@ def verify_deployment(skip_verify=False):
         print("\n⚠️  Some checks failed — review the output above")
 
 
+def write_sentry_config(env):
+    """Generate optional Sentry config from .env before upload."""
+    config = {
+        "dsn": env.get("SENTRY_DSN", ""),
+        "environment": env.get("SENTRY_ENVIRONMENT", "production"),
+        "release": env.get("SENTRY_RELEASE", ""),
+    }
+    target = LOCAL_DIR / "js" / "sentry-config.js"
+    target.write_text(
+        f"window.EMPIRICAL_SENTRY_CONFIG = {json.dumps(config, indent=2)};\n"
+    )
+
+
 def main():
     dry_run = "--dry-run" in sys.argv or "-n" in sys.argv
     skip_verify = "--no-verify" in sys.argv
 
     env = load_env()
+    write_sentry_config(env)
     server = env.get("FTP_SERVER", "empiricalrecords.com")
     username = env.get("FTP_USERNAME", "")
     password = env.get("FTP_PASSWORD", "")
